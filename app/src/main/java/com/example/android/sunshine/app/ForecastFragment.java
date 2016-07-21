@@ -16,9 +16,12 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -74,7 +77,13 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("84606"); //TODO make this a setting or field
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String location = prefs.getString(getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
+            Log.v("Location -------- ", location);
+
+            weatherTask.execute(location.toString()); //TODO make this a setting or field
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -125,6 +134,12 @@ public class ForecastFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void sendToast (String loc){
+        Log.v("Locationddd", loc);
+//        Toast.makeText(getActivity(), loc, Toast.LENGTH_SHORT).show();
+
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
@@ -273,6 +288,12 @@ public class ForecastFragment extends Fragment {
                 URL url = new URL(builtUri.toString());
 
                 Log.v(LOG_TAG, "BUILT URI: " + builtUri.toString());
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+                Log.v(LOG_TAG, "Preference: " + prefs + " aaaa " + params[0]);
+                sendToast(params[0]);
+//                Toast.makeText(getActivity(), "something", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "YEAH", Toast.LENGTH_LONG).show();
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();

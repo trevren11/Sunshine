@@ -15,8 +15,10 @@
  */
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -37,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.detail, menu);
         return true;
     }
 
@@ -48,11 +50,15 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        Log.v("G", "Before");
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Log.v("ID", String.valueOf(id));
+            startActivity(new Intent(this, SettingsActivitya.class));
             return true;
         }
 
+        Log.v("G", "After");
         return super.onOptionsItemSelected(item);
     }
 }
