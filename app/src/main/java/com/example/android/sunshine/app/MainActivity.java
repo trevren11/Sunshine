@@ -16,7 +16,10 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -39,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.detail, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -50,15 +53,42 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        Log.v("ID", String.valueOf(id));
+        Log.v("Want", String.valueOf(R.id.action_map));
         Log.v("G", "Before");
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Log.v("ID", String.valueOf(id));
+
             startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        if (id == R.id.action_map) {
+            openPreferredLocation();
             return true;
         }
 
         Log.v("G", "After");
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openPreferredLocation() {
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String location = sharedPrefs.getString(
+                getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default)
+        );
+        Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
+                .appendQueryParameter("q", location)
+                .build();
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geoLocation);
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Log.d("Map", "Couldn't call " + location + ", no receiving apps installed!");
+        }
     }
 }
